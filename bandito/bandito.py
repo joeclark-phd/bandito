@@ -2,7 +2,7 @@ import random
 import itertools
 import bisect
 import math
-
+import datetime
 
 
 
@@ -92,7 +92,9 @@ class Bandit:
         self._probexplore = []
         
     def simulate(self):
-        # todo: store starting time
+        
+        starttime = datetime.datetime.now()
+
         for t in range(self._turns):
         
             # implement turbulence
@@ -123,7 +125,9 @@ class Bandit:
             self._probexplore.append( 1 - max(choice_probabilities) )
 
         self._complete = True
-        # todo: check elapsed time and return it
+
+        endtime = datetime.datetime.now()
+        self._simtime = endtime-starttime # how long the simulation took
         
 
     def score(self):
@@ -162,6 +166,7 @@ if __name__ == "__main__":
     #print( "knowledge:", b._knowledge )
     #print( "opinion", b._opinion )
     #print( "probability of exploration", b._probexplore )
+    print( "simulation time",b._simtime )
 
 
 
