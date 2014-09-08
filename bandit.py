@@ -28,6 +28,9 @@ class Bandit:
                     lambda beliefs, strategy:
                     [ math.exp(b/(strategy/10))/sum([ math.exp(a/(strategy/10)) for a in beliefs ]) for b in beliefs ],
                  turbulence=0,
+                 belief_fxn=
+                    lambda beliefs, tries, wins:
+                    [ wins[i]/tries[i] for i in range(len(beliefs)) ],
                  strategy=0.5
                  ):
         self._arms = arms
@@ -67,14 +70,26 @@ class Bandit:
         # parameters or configuration. By default, it is the "tau" of the 
         # SOFTMAX calculation.
         
+        self._belief_fxn = belief_fxn
+        self._tries = [2 for i in range(arms)]
+        self._wins = [1 for i in range(arms)]
         self._beliefs = [0.5 for i in range(arms)]
+        # By default, the gambler's belief about the payoff of each "arm"
+        # is the number of wins divided by the number of tries.         
         # According to Hart Posen (personal communication), the initial
-        # belief of 0.5 is simulated as two trials with one success;
+        # belief for all arms is 0.5, simulated as 2 trials with 1 win;
         # this way the first true trial is averaged in as if it were
         # the third trial, so the belief will not jump to 0.0 or 1.0.
         # We simply keep track of the # tries and # wins for each arm.
-        self._tries = [2 for i in range(arms)]
-        self._wins = [1 for i in range(arms)]
+        # The belief-updating function is called with self._beliefs = 
+        # self._belief_fxn( self._beliefs, self._tries, self._wins )
+        # after self_tries and self_wins have been updated.
+        
+        # data structures to hold score data over time
+        self._score = []
+        self._knowledge = []
+        self._opinion = []
+        self._probexplore = []
         
     def simulate(self):
         # todo: store starting time
@@ -98,11 +113,14 @@ class Bandit:
                 self._assetstock -= 1
                 
             # Update beliefs
-            self._beliefs[choice] = self._wins[choice] / self._tries[choice]
+            self._beliefs = self._belief_fxn( self._beliefs, self._tries, self._wins )
             # Beliefs are simply the proportion of trials of each arm that have resulted in wins.
-            # todo: implement the belief computation as a passed-in function, so that alternative models (such as exponentially weighted moving average) could be substituted
             
-            # todo: compute + store "knowledge" and "opinion" theoretical variables
+            # Score time series of asset stock, "Knowledge", "Opinion", and "Prob_Explore"
+            self._score.append(self._assetstock)
+            self._knowledge.append( 1 - sum([ (self._beliefs[i]-self._payoffs[i])**2 for i in range(self._arms) ]) )
+            self._opinion.append( sum([(self._beliefs[i] - (sum(self._beliefs)/self._arms))**2 for i in range(self._arms)]) )
+            self._probexplore.append( 1 - max(choice_probabilities) )
 
         self._complete = True
         # todo: check elapsed time and return it
@@ -122,6 +140,10 @@ if __name__ == "__main__":
     assert b.score() == None
     b.simulate()
     print( "final asset stock:", b.score() )
+    #print( "scores", b._score )
+    #print( "knowledge:", b._knowledge )
+    #print( "opinion", b._opinion )
+    #print( "probability of exploration", b._probexplore )
 
 
 
