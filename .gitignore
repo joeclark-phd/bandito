@@ -3,7 +3,8 @@
 [#]*[#]
 .\#*
 
-
+# experiment output
+output/
 
 
 # Byte-compiled / optimized / DLL files

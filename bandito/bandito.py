@@ -128,10 +128,28 @@ class Bandit:
 
     def score(self):
         if self._complete:
-            return self._assetstock
+            return self._score[-1]
         else:
             return None
             # todo: decide: if they request the score without first running the simulation, should we run self.simulate() for them? or raise an exception, or what?
+            
+    def knowledge(self):
+        if self._complete:
+            return self._knowledge[-1]
+        else:
+            return None
+
+    def opinion(self):
+        if self._complete:
+            return self._opinion[-1]
+        else:
+            return None
+
+    def probexplore(self):
+        if self._complete:
+            return self._probexplore[-1]
+        else:
+            return None
 
 
 
