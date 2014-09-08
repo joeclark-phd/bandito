@@ -45,8 +45,15 @@ class BanditExperiment:
         self._arms = arms
         self._turns = turns
         
-        #TODO: print a message about how many experiments and reps will run
+        self._numexps = len(payoff_fxn)*len(turbulence_fxn)*len(strategy_fxn)*len(turbulence)*len(belief_fxn)*len(strategy)
+        self.log("Planning "+str(self._numexps)+" experiments with "+str(replications)+
+                 " replications x "+str(turns)+" turns each.\nI.e., a total of "+
+                 str(self._numexps*replications*turns)+" turns of processing.\n")
+        self._currentexp = 0  # which experiment are we on currently?
+
         #TODO: open three files: a logfile, a datafile of all simulations, and a datafile of aggregates/averages
+
+        programstart = datetime.datetime.now()
         for pf in payoff_fxn:
             for tf in turbulence_fxn:
                 for sf in strategy_fxn:
@@ -54,7 +61,10 @@ class BanditExperiment:
                         for bf in belief_fxn:
                             for st in strategy:
                                     self.runsims(pf,tf,sf,tb,bf,st)
-                                        
+        self.log("All experiments completed in " + str(datetime.datetime.now() - programstart))
+        
+        
+        
     def runsims(self,payoff_fxn,turbulence_fxn,strategy_fxn,turbulence,belief_fxn,strategy):
         
         # hold the data from each replication (to be averaged later)
@@ -63,7 +73,11 @@ class BanditExperiment:
         finalopinions = []
         finalprobexplores = []
         
-        self.log("Starting experiment with:\n payoff_fxn="+str(payoff_fxn)+
+        self._currentexp += 1
+        
+        self.log("Starting experiment " + str(self._currentexp) +
+                 " of " + str(self._numexps) +
+                 " with:\n payoff_fxn="+str(payoff_fxn)+
                  "\n turbulence_fxn="+str(turbulence_fxn)+
                  "\n strategy_fxn="+str(strategy_fxn)+
                  "\n belief_fxn="+str(belief_fxn)+
