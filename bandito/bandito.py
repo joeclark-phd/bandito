@@ -4,6 +4,8 @@ import bisect
 import math
 import datetime
 
+from banditfunctions import defaultpayoff
+
 
 
 class Bandit:
@@ -18,8 +20,7 @@ class Bandit:
     def __init__(self,
                  arms=10,
                  turns=500,
-                 payoff_fxn=
-                    lambda: random.betavariate(2,2),
+                 payoff_fxn=defaultpayoff,
                  turbulence_fxn= 
                     lambda payoffs, payoff_fxn, turbulence:  
                     [ payoff_fxn() if random.random()<0.5 else x for x in payoffs ] 
