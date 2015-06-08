@@ -152,6 +152,7 @@ class Bandit:
 
 
 if __name__ == "__main__":
+
     b = Bandit()
     assert b.score() == None
     b.simulate()
