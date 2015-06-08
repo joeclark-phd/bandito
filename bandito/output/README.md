@@ -1,0 +1,1 @@
+This folder will be used when banditexperiment.py is called by itself, e.g. for testing and development, but not when running experiments from its parent folder.  The output of "real" experiments should be found in the 'output' directory one level up.
