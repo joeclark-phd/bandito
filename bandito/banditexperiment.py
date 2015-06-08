@@ -1,7 +1,7 @@
 
 import datetime, random, math
 from bandito import Bandit
-from banditfunctions import defaultpayoff
+from banditfunctions import betadist_payoff, randomshock, softmax_strategy, simplebelief
 
 
 
@@ -20,24 +20,29 @@ class BanditExperiment:
     """
     def __init__(self,
                  debug=True,
-                 experiment_name=datetime.datetime.now().strftime("%Y-%m-%d-%H.%M.%S"),
                  replications=100, # Posen & Levinthal used 25,000
                  arms=10,
                  turns=500,
-                 payoff_fxn=[defaultpayoff],
-                 turbulence_fxn= 
-                    [lambda payoffs, payoff_fxn, turbulence:  
-                    [ payoff_fxn() if random.random()<0.5 else x for x in payoffs ] 
-                    if random.random()<turbulence else payoffs],
-                 strategy_fxn=
-                    [lambda beliefs, strategy:
-                    [ math.exp(b/(strategy/10))/sum([ math.exp(a/(strategy/10)) for a in beliefs ]) for b in beliefs ]],
+                 payoff_fxn=[betadist_payoff],
+                 turbulence_fxn=[randomshock],
+                 strategy_fxn=[softmax_strategy],
                  turbulence=[0],
-                 belief_fxn=
-                    [lambda beliefs, tries, wins:
-                    [ wins[i]/tries[i] for i in range(len(beliefs)) ]],
-                 strategy=[0.5]
+                 belief_fxn=[simplebelief],
+                 strategy=[0.5],
+                 experiment_name=""
                  ):
+                 
+        programstart = datetime.datetime.now()
+        
+        self._experiment_name = experiment_name if experiment_name else programstart.strftime('%Y%m%d-%H%M%S')
+        self._logfile = open(("output/"+self._experiment_name+"-log.txt"), 'w')
+        self._datafile = open(("output/"+self._experiment_name+"-data.csv"), 'w')
+        self._datafile.write("EXPERIMENT,REPLICATION,PAYOFF_FXN,TURBULENCE_FXN,STRATEGY_FXN,BELIEF_FXN,TURBULENCE,STRATEGY,SCORE,KNOWLEDGE,OPINION,PROBEXPLORE\n") # CSV header row
+        self._summaryfile = open(("output/"+self._experiment_name+"-summary.csv"), 'w')
+        self._summaryfile.write("EXPERIMENT,PAYOFF_FXN,TURBULENCE_FXN,STRATEGY_FXN,BELIEF_FXN,TURBULENCE,STRATEGY,MEAN_SCORE,MEAN_KNOWLEDGE,MEAN_OPINION,MEAN_PROBEXPLORE\n") # CSV header row
+
+        #TODO: also add an average/aggregate datafile
+                 
         self._debug = debug
         self._expname = experiment_name
         self._reps = replications
@@ -47,12 +52,10 @@ class BanditExperiment:
         self._numexps = len(payoff_fxn)*len(turbulence_fxn)*len(strategy_fxn)*len(turbulence)*len(belief_fxn)*len(strategy)
         self.log("Planning "+str(self._numexps)+" experiments with "+str(replications)+
                  " replications x "+str(turns)+" turns each.\nI.e., a total of "+
-                 str(self._numexps*replications*turns)+" turns of processing.\n")
+                 str(self._numexps*replications*turns)+" turns of processing.\n\n")
         self._currentexp = 0  # which experiment are we on currently?
 
-        #TODO: open three files: a logfile, a datafile of all simulations, and a datafile of aggregates/averages
-
-        programstart = datetime.datetime.now()
+        
         for pf in payoff_fxn:
             for tf in turbulence_fxn:
                 for sf in strategy_fxn:
@@ -61,7 +64,7 @@ class BanditExperiment:
                             for st in strategy:
                                     self.runsims(pf,tf,sf,tb,bf,st)
         self.log("All experiments completed in " + str(datetime.datetime.now() - programstart))
-        
+        self._logfile.close()
         
         
     def runsims(self,payoff_fxn,turbulence_fxn,strategy_fxn,turbulence,belief_fxn,strategy):
@@ -81,7 +84,7 @@ class BanditExperiment:
                  "\n strategy_fxn="+str(strategy_fxn)+
                  "\n belief_fxn="+str(belief_fxn)+
                  "\n turbulence="+str(turbulence)+
-                 "\n strategy="+str(strategy))
+                 "\n strategy="+str(strategy)+"\n")
         expstart = datetime.datetime.now()
         
         for i in range(self._reps):
@@ -91,14 +94,42 @@ class BanditExperiment:
             finalknowledges.append(b.knowledge())
             finalopinions.append(b.opinion())
             finalprobexplores.append(b.probexplore())
+            # log the data
+            self._datafile.write('{},{},{},{},{},{},{},{},{},{},{},{}\n'.format(
+                    self._currentexp, # experiment number
+                    (i+1), # replication number
+                    str(payoff_fxn),
+                    str(turbulence_fxn),
+                    str(strategy_fxn),
+                    str(belief_fxn),
+                    str(turbulence),
+                    str(strategy),
+                    b.score(),
+                    b.knowledge(),
+                    b.opinion(),
+                    b.probexplore()
+                    ))
             #self.log("simulation "+str(i+1)+" of "+str(self._reps)+" took "+str(b._simtime))
-            #TODO: print this simulations' output to a complete datafile
         
-        #TODO: print averages to an aggregated datafile
-        self.log("FINISHED in "+str(datetime.datetime.now()-expstart)+"\n")
+        #TODO: print averages to an aggregated datafile #self._summaryfile.write("EXPERIMENT,PAYOFF_FXN,TURBULENCE_FXN,STRATEGY_FXN,BELIEF_FXN,TURBULENCE,STRATEGY,MEAN_SCORE,MEAN_KNOWLEDGE,MEAN_OPINION,MEAN_PROBEXPLORE\n") # CSV header row
+        self._summaryfile.write('{},{},{},{},{},{},{},{},{},{},{}\n'.format(
+            self._currentexp,
+            str(payoff_fxn),
+            str(turbulence_fxn),
+            str(strategy_fxn),
+            str(belief_fxn),
+            str(turbulence),
+            str(strategy),
+            sum(finalscores)/self._reps,
+            sum(finalknowledges)/self._reps,
+            sum(finalopinions)/self._reps,
+            sum(finalprobexplores)/self._reps
+            ))
+
+        self.log("FINISHED in "+str(datetime.datetime.now()-expstart)+"\n\n")
         
     def log(self,message):
-        #TODO: log 'message' to a logfile
+        self._logfile.write(message)
         if self._debug:
             print(message)  #only print to screen if user wants it wordy for debugging purposes
         

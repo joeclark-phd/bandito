@@ -4,7 +4,7 @@ import bisect
 import math
 import datetime
 
-from banditfunctions import defaultpayoff
+from banditfunctions import betadist_payoff, randomshock, softmax_strategy, simplebelief
 
 
 
@@ -20,18 +20,11 @@ class Bandit:
     def __init__(self,
                  arms=10,
                  turns=500,
-                 payoff_fxn=defaultpayoff,
-                 turbulence_fxn= 
-                    lambda payoffs, payoff_fxn, turbulence:  
-                    [ payoff_fxn() if random.random()<0.5 else x for x in payoffs ] 
-                    if random.random()<turbulence else payoffs,
-                 strategy_fxn=
-                    lambda beliefs, strategy:
-                    [ math.exp(b/(strategy/10))/sum([ math.exp(a/(strategy/10)) for a in beliefs ]) for b in beliefs ],
+                 payoff_fxn=betadist_payoff,
+                 turbulence_fxn=randomshock,
+                 strategy_fxn=softmax_strategy,
                  turbulence=0,
-                 belief_fxn=
-                    lambda beliefs, tries, wins:
-                    [ wins[i]/tries[i] for i in range(len(beliefs)) ],
+                 belief_fxn=simplebelief,
                  strategy=0.5
                  ):
         self._arms = arms
@@ -72,8 +65,8 @@ class Bandit:
         # SOFTMAX calculation.
         
         self._belief_fxn = belief_fxn
-        self._tries = [2 for i in range(arms)]
-        self._wins = [1 for i in range(arms)]
+        self._tries = [0 for i in range(arms)]
+        self._wins = [0 for i in range(arms)]
         self._beliefs = [0.5 for i in range(arms)]
         # By default, the gambler's belief about the payoff of each "arm"
         # is the number of wins divided by the number of tries.         
