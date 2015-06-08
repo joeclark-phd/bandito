@@ -1,6 +1,6 @@
 
 import datetime, random, math
-from bandito import Bandit
+from bandit import Bandit
 from banditfunctions import betadist_payoff, randomshock, softmax_strategy, simplebelief
 
 
@@ -112,12 +112,12 @@ def BanditExperiment(debug=True,
                             
                             _summaryfile.write('{},{},{},{},{},{},{},{},{},{},{}\n'.format(
                                 _currentexp,
-                                str(payoff_fxn),
-                                str(turbulence_fxn),
-                                str(strategy_fxn),
-                                str(belief_fxn),
-                                str(turbulence),
-                                str(strategy),
+                                str(pf),
+                                str(tf),
+                                str(sf),
+                                str(bf),
+                                str(tb),
+                                str(st),
                                 sum(finalscores)/replications,
                                 sum(finalknowledges)/replications,
                                 sum(finalopinions)/replications,
