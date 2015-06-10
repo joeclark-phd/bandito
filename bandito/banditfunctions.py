@@ -28,7 +28,8 @@ def simplebelief(beliefs, tries, wins):
     # Note: tries is initialized with 2 and wins with 1, so the first
     # simulated trial will not cause beliefs to jump to 0 or 1.
     # From replication of Posen & Levinthal (2012).
-    return [ (wins[i]+1)/(tries[i]+2) for i in range(len(beliefs)) ]
+    return [ (sum(wins[i])+1)/(sum(tries[i])+2) for i in range(len(beliefs)) ]
+    
     
     
 if __name__ == "__main__":

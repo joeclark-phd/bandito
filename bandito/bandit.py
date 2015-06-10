@@ -65,8 +65,11 @@ class Bandit:
         # SOFTMAX calculation.
         
         self._belief_fxn = belief_fxn
-        self._tries = [0 for i in range(arms)]
-        self._wins = [0 for i in range(arms)]
+        # we must now record the actual tries and wins, not just running sums,
+        # so that 'belief' algorithms can be programmed to consider when the
+        # experiences occurred
+        self._tries = [[0] for i in range(arms)]
+        self._wins = [[0] for i in range(arms)]
         self._beliefs = [0.5 for i in range(arms)]
         # By default, the gambler's belief about the payoff of each "arm"
         # is the number of wins divided by the number of tries.         
@@ -101,16 +104,16 @@ class Bandit:
             choice = bisect.bisect(cumdist,x)
             
             # The gambler's choice results in a win or a loss (a gain or loss of 1 "asset stock")
-            self._tries[choice] += 1
+            [self._tries[a].append(1) if a==choice else self._tries[a].append(0) for a in range(self._arms)]
             if random.random() < self._payoffs[choice]:
-                self._wins[choice] += 1
+                [self._wins[a].append(1) if a==choice else self._wins[a].append(0) for a in range(self._arms)]
                 self._assetstock += 1
             else:
+                [self._wins.append(0) for a in range(self._arms)]
                 self._assetstock -= 1
                 
             # Update beliefs
             self._beliefs = self._belief_fxn( self._beliefs, self._tries, self._wins )
-            # Beliefs are simply the proportion of trials of each arm that have resulted in wins.
             
             # Score time series of asset stock, "Knowledge", "Opinion", and "Prob_Explore"
             self._score.append(self._assetstock)
