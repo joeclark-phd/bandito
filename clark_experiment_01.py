@@ -16,6 +16,6 @@ from bandito.banditexperiment import BanditExperiment
 random.seed(12345)
 
 # Define the experiment:
-
-BanditExperiment(strategy=[0.02,0.25,0.5,0.75,1], turbulence=[0,0.005,0.01,0.02,0.04,0.08,0.16,0.32], latency=[0,1,2,4,8,16], replications=10, experiment_name="clark01")
+# 1000 reps seems a little more reasonable than P+L's 25000.  This is 240 experimental treatments x 1000 replications and should run in about 6 hours on my laptop.
+BanditExperiment(strategy=[0.02,0.25,0.5,0.75,1], turbulence=[0,0.005,0.01,0.02,0.04,0.08,0.16,0.32], latency=[0,1,2,4,8,16], replications=1000, experiment_name="clark01")
 

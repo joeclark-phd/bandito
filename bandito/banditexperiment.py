@@ -36,16 +36,16 @@ def BanditExperiment(debug=True,
     _experiment_name = experiment_name if experiment_name else programstart.strftime('%Y%m%d-%H%M%S')
     _logfile = open(("output/"+_experiment_name+"-log.txt"), 'w')
     _datafile = open(("output/"+_experiment_name+"-data.csv"), 'w')
-    _datafile.write("EXPERIMENT,REPLICATION,PAYOFF_FXN,TURBULENCE_FXN,STRATEGY_FXN,BELIEF_FXN,TURBULENCE,STRATEGY,SCORE,KNOWLEDGE,OPINION,PROBEXPLORE\n") # CSV header row
+    _datafile.write("EXPERIMENT,REPLICATION,PAYOFF_FXN,TURBULENCE_FXN,STRATEGY_FXN,BELIEF_FXN,TURBULENCE,STRATEGY,LATENCY,SCORE,KNOWLEDGE,OPINION,PROBEXPLORE\n") # CSV header row
     _summaryfile = open(("output/"+_experiment_name+"-summary.csv"), 'w')
-    _summaryfile.write("EXPERIMENT,PAYOFF_FXN,TURBULENCE_FXN,STRATEGY_FXN,BELIEF_FXN,TURBULENCE,STRATEGY,MEAN_SCORE,MEAN_KNOWLEDGE,MEAN_OPINION,MEAN_PROBEXPLORE\n") # CSV header row
+    _summaryfile.write("EXPERIMENT,PAYOFF_FXN,TURBULENCE_FXN,STRATEGY_FXN,BELIEF_FXN,TURBULENCE,STRATEGY,LATENCY,MEAN_SCORE,MEAN_KNOWLEDGE,MEAN_OPINION,MEAN_PROBEXPLORE\n") # CSV header row
 
     def log(message):
         _logfile.write(message)
         if debug:
             print(message)  #only print to screen if user wants it wordy for debugging purposes
         
-    _numexps = len(payoff_fxn)*len(turbulence_fxn)*len(strategy_fxn)*len(turbulence)*len(belief_fxn)*len(strategy)
+    _numexps = len(payoff_fxn)*len(turbulence_fxn)*len(strategy_fxn)*len(turbulence)*len(belief_fxn)*len(strategy)*len(latency)
     log("Planning "+str(_numexps)+" experiments with "+str(replications)+
              " replications x "+str(turns)+" turns each.\nI.e., a total of "+
              str(_numexps*replications*turns)+" turns of processing.\n\n")
@@ -79,7 +79,8 @@ def BanditExperiment(debug=True,
                                     "\n strategy_fxn="+str(sf)+
                                     "\n belief_fxn="+str(bf)+
                                     "\n turbulence="+str(tb)+
-                                    "\n strategy="+str(st)+"\n")
+                                    "\n strategy="+str(st)+
+                                    "\n latency="+str(lt)+"\n")
                                 expstart = datetime.datetime.now()
                                 
                                 for i in range(replications):
@@ -102,6 +103,7 @@ def BanditExperiment(debug=True,
                                             str(bf),
                                             str(tb),
                                             str(st),
+                                            str(lt),
                                             b.score(),
                                             b.knowledge(),
                                             b.opinion(),
@@ -120,6 +122,7 @@ def BanditExperiment(debug=True,
                                     str(bf),
                                     str(tb),
                                     str(st),
+                                    str(lt),
                                     sum(finalscores)/replications,
                                     sum(finalknowledges)/replications,
                                     sum(finalopinions)/replications,
