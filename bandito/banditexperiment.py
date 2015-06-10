@@ -1,7 +1,7 @@
 
 import datetime, random, math
 from bandit import Bandit
-from banditfunctions import betadist_payoff, randomshock, softmax_strategy, simplebelief
+from banditfunctions import *
 
 
 
@@ -13,7 +13,7 @@ def BanditExperiment(debug=True,
                      turbulence_fxn=[randomshock],
                      strategy_fxn=[softmax_strategy],
                      turbulence=[0],
-                     belief_fxn=[simplebelief],
+                     belief_fxn=[belief_with_latency],
                      strategy=[0.5],
                      latency=[0],
                      experiment_name=""

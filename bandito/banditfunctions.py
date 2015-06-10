@@ -31,12 +31,14 @@ def simplebelief(beliefs, tries, wins, latency):
     return [ (sum(wins[i])+1)/(sum(tries[i])+2) for i in range(len(beliefs)) ]
     
 def belief_with_latency(beliefs, tries, wins, latency):
-    # Simply calculate tries/wins for each arm to estimate the payoff.
-    # This function never forgets and does not weight the data in any way.
-    # Note: tries is initialized with 2 and wins with 1, so the first
-    # simulated trial will not cause beliefs to jump to 0 or 1.
-    # From replication of Posen & Levinthal (2012).
-    return [ (sum(wins[i])+1)/(sum(tries[i])+2) for i in range(len(beliefs)) ]
+    # This algorithm calculates beliefs as wins/tries with one tweak:
+    # it ignores tries within the last N turns (N=latency) to simulate
+    # a less-than-immediate feedback loop.
+    remembered_tries = [tries[i] for i in range(len(beliefs))]
+    remembered_wins = [wins[i] for i in range(len(beliefs))]
+    #remembered_tries = [tries[i][:-latency] if latency !=0 else tries[i] for i in range(len(beliefs))]
+    #remembered_wins = [wins[i][:-latency] if latency !=0 else wins[i] for i in range(len(beliefs))]
+    return [ (sum(remembered_wins[i])+1)/(sum(remembered_tries[i])+2) for i in range(len(beliefs)) ]
     
     
     

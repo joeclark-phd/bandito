@@ -4,7 +4,7 @@ import bisect
 import math
 import datetime
 
-from banditfunctions import betadist_payoff, randomshock, softmax_strategy, simplebelief
+from banditfunctions import *
 
 
 
@@ -159,7 +159,7 @@ class Bandit:
 
 if __name__ == "__main__":
 
-    b = Bandit()
+    b = Bandit(belief_fxn=belief_with_latency)
     assert b.score() == None
     b.simulate()
     print( "final asset stock:", b.score() )
