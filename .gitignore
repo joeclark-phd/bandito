@@ -6,6 +6,8 @@
 # experiment output
 output/*.txt
 output/*.csv
+bandito/output/*.txt
+bandito/output/*.csv
 
 
 # Byte-compiled / optimized / DLL files

@@ -15,6 +15,7 @@ def BanditExperiment(debug=True,
                      turbulence=[0],
                      belief_fxn=[simplebelief],
                      strategy=[0.5],
+                     latency=[0],
                      experiment_name=""
                      ):
     """
@@ -59,74 +60,75 @@ def BanditExperiment(debug=True,
                 for tb in turbulence:
                     for bf in belief_fxn:
                         for st in strategy:
-                        
-                            # Run several replications of the simulation within one experimental condition:
-                        
-                            # hold the data from each replication (to be averaged later)
-                            finalscores = []
-                            finalknowledges = []
-                            finalopinions = []
-                            finalprobexplores = []
+                            for lt in latency:
                             
-                            _currentexp += 1
+                                # Run several replications of the simulation within one experimental condition:
                             
-                            log("Starting experiment " + str(_currentexp) +
-                                " of " + str(_numexps) +
-                                " with:\n payoff_fxn="+str(pf)+
-                                "\n turbulence_fxn="+str(tf)+
-                                "\n strategy_fxn="+str(sf)+
-                                "\n belief_fxn="+str(bf)+
-                                "\n turbulence="+str(tb)+
-                                "\n strategy="+str(st)+"\n")
-                            expstart = datetime.datetime.now()
-                            
-                            for i in range(replications):
-                            
-                                # Do one replication (of many) within an experimental condition:
+                                # hold the data from each replication (to be averaged later)
+                                finalscores = []
+                                finalknowledges = []
+                                finalopinions = []
+                                finalprobexplores = []
                                 
-                                b = Bandit( arms=arms, turns=turns, payoff_fxn=pf, turbulence_fxn=tf, strategy_fxn=sf, turbulence=tb, belief_fxn=bf, strategy=st)
-                                b.simulate()
-                                finalscores.append(b.score())
-                                finalknowledges.append(b.knowledge())
-                                finalopinions.append(b.opinion())
-                                finalprobexplores.append(b.probexplore())
-                                # log the data
-                                _datafile.write('{},{},{},{},{},{},{},{},{},{},{},{}\n'.format(
-                                        _currentexp, # experiment number
-                                        (i+1), # replication number
-                                        str(pf),
-                                        str(tf),
-                                        str(sf),
-                                        str(bf),
-                                        str(tb),
-                                        str(st),
-                                        b.score(),
-                                        b.knowledge(),
-                                        b.opinion(),
-                                        b.probexplore()
-                                        ))
-                                #log("simulation "+str(i+1)+" of "+str(replications)+" took "+str(b._simtime))
-
-                            # Take average results from all replications (within one experimental condition)
-                            # and output them to a 'summary' data file.
-                            
-                            _summaryfile.write('{},{},{},{},{},{},{},{},{},{},{}\n'.format(
-                                _currentexp,
-                                str(pf),
-                                str(tf),
-                                str(sf),
-                                str(bf),
-                                str(tb),
-                                str(st),
-                                sum(finalscores)/replications,
-                                sum(finalknowledges)/replications,
-                                sum(finalopinions)/replications,
-                                sum(finalprobexplores)/replications
-                                ))
-
-                            log("FINISHED in "+str(datetime.datetime.now()-expstart)+"\n\n")
-                            
-                            # Loop goes to the next experimental condition.
+                                _currentexp += 1
+                                
+                                log("Starting experiment " + str(_currentexp) +
+                                    " of " + str(_numexps) +
+                                    " with:\n payoff_fxn="+str(pf)+
+                                    "\n turbulence_fxn="+str(tf)+
+                                    "\n strategy_fxn="+str(sf)+
+                                    "\n belief_fxn="+str(bf)+
+                                    "\n turbulence="+str(tb)+
+                                    "\n strategy="+str(st)+"\n")
+                                expstart = datetime.datetime.now()
+                                
+                                for i in range(replications):
+                                
+                                    # Do one replication (of many) within an experimental condition:
+                                    
+                                    b = Bandit( arms=arms, turns=turns, payoff_fxn=pf, turbulence_fxn=tf, strategy_fxn=sf, turbulence=tb, belief_fxn=bf, strategy=st, latency=lt)
+                                    b.simulate()
+                                    finalscores.append(b.score())
+                                    finalknowledges.append(b.knowledge())
+                                    finalopinions.append(b.opinion())
+                                    finalprobexplores.append(b.probexplore())
+                                    # log the data
+                                    _datafile.write('{},{},{},{},{},{},{},{},{},{},{},{}\n'.format(
+                                            _currentexp, # experiment number
+                                            (i+1), # replication number
+                                            str(pf),
+                                            str(tf),
+                                            str(sf),
+                                            str(bf),
+                                            str(tb),
+                                            str(st),
+                                            b.score(),
+                                            b.knowledge(),
+                                            b.opinion(),
+                                            b.probexplore()
+                                            ))
+                                    #log("simulation "+str(i+1)+" of "+str(replications)+" took "+str(b._simtime))
+    
+                                # Take average results from all replications (within one experimental condition)
+                                # and output them to a 'summary' data file.
+                                
+                                _summaryfile.write('{},{},{},{},{},{},{},{},{},{},{}\n'.format(
+                                    _currentexp,
+                                    str(pf),
+                                    str(tf),
+                                    str(sf),
+                                    str(bf),
+                                    str(tb),
+                                    str(st),
+                                    sum(finalscores)/replications,
+                                    sum(finalknowledges)/replications,
+                                    sum(finalopinions)/replications,
+                                    sum(finalprobexplores)/replications
+                                    ))
+    
+                                log("FINISHED in "+str(datetime.datetime.now()-expstart)+"\n\n")
+                                
+                                # Loop goes to the next experimental condition.
 
 
 

@@ -22,7 +22,15 @@ def softmax_strategy(beliefs, strategy):
     # From replication of Posen & Levinthal (2012).
     return [ math.exp(b/(strategy/10))/sum([ math.exp(a/(strategy/10)) for a in beliefs ]) for b in beliefs ]
     
-def simplebelief(beliefs, tries, wins):
+def simplebelief(beliefs, tries, wins, latency):
+    # Simply calculate tries/wins for each arm to estimate the payoff.
+    # This function never forgets and does not weight the data in any way.
+    # Note: tries is initialized with 2 and wins with 1, so the first
+    # simulated trial will not cause beliefs to jump to 0 or 1.
+    # From replication of Posen & Levinthal (2012).
+    return [ (sum(wins[i])+1)/(sum(tries[i])+2) for i in range(len(beliefs)) ]
+    
+def belief_with_latency(beliefs, tries, wins, latency):
     # Simply calculate tries/wins for each arm to estimate the payoff.
     # This function never forgets and does not weight the data in any way.
     # Note: tries is initialized with 2 and wins with 1, so the first

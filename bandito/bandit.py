@@ -25,7 +25,8 @@ class Bandit:
                  strategy_fxn=softmax_strategy,
                  turbulence=0,
                  belief_fxn=simplebelief,
-                 strategy=0.5
+                 strategy=0.5,
+                 latency=0
                  ):
         self._arms = arms
         self._turns = turns
@@ -65,6 +66,7 @@ class Bandit:
         # SOFTMAX calculation.
         
         self._belief_fxn = belief_fxn
+        self._latency = latency
         # we must now record the actual tries and wins, not just running sums,
         # so that 'belief' algorithms can be programmed to consider when the
         # experiences occurred
@@ -77,10 +79,11 @@ class Bandit:
         # belief for all arms is 0.5, simulated as 2 trials with 1 win;
         # this way the first true trial is averaged in as if it were
         # the third trial, so the belief will not jump to 0.0 or 1.0.
-        # We simply keep track of the # tries and # wins for each arm.
+        # We keep track of the tries and wins for each arm as arrays of
+        # 1s (among zeroes) as long as the number of turns so far elapsed.
         # The belief-updating function is called with self._beliefs = 
-        # self._belief_fxn( self._beliefs, self._tries, self._wins )
-        # after self_tries and self_wins have been updated.
+        # self._belief_fxn( self._beliefs, self._tries, self._wins,
+        # self._latency) after self_tries and self_wins have been updated.
         
         # data structures to hold score data over time
         self._score = []
@@ -113,7 +116,7 @@ class Bandit:
                 self._assetstock -= 1
                 
             # Update beliefs
-            self._beliefs = self._belief_fxn( self._beliefs, self._tries, self._wins )
+            self._beliefs = self._belief_fxn( self._beliefs, self._tries, self._wins, self._latency )
             
             # Score time series of asset stock, "Knowledge", "Opinion", and "Prob_Explore"
             self._score.append(self._assetstock)
