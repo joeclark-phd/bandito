@@ -24,7 +24,7 @@ class Bandit:
                  turbulence_fxn=randomshock,
                  strategy_fxn=softmax_strategy,
                  turbulence=0,
-                 belief_fxn=simplebelief,
+                 belief_fxn=belief_with_latency_and_memory,
                  strategy=0.5,
                  latency=0,
                  memory=500

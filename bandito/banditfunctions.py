@@ -34,13 +34,20 @@ def belief_with_latency(beliefs, tries, wins, latency, memory):
     # This algorithm calculates beliefs as wins/tries with one tweak:
     # it ignores tries within the last N turns (N=latency) to simulate
     # a less-than-immediate feedback loop.
-    remembered_tries = [tries[i] for i in range(len(beliefs))]
-    remembered_wins = [wins[i] for i in range(len(beliefs))]
-    #remembered_tries = [tries[i][:-latency] if latency !=0 else tries[i] for i in range(len(beliefs))]
-    #remembered_wins = [wins[i][:-latency] if latency !=0 else wins[i] for i in range(len(beliefs))]
+    remembered_tries = [tries[i][:-latency] if latency !=0 else tries[i] for i in range(len(beliefs))]
+    remembered_wins = [wins[i][:-latency] if latency !=0 else wins[i] for i in range(len(beliefs))]
     return [ (sum(remembered_wins[i])+1)/(sum(remembered_tries[i])+2) for i in range(len(beliefs)) ]
     
-    
+def belief_with_latency_and_memory(beliefs, tries, wins, latency, memory):
+    # This algorithm calculates beliefs as wins/tries with one tweak:
+    # it ignores tries within the last N turns (N=latency) to simulate
+    # a less-than-immediate feedback loop.
+    m = len(tries)-memory # the index of farthest-back remembrance
+    remembered_tries = [tries[i][m if m>0 else 0:-latency if latency!=0 else None] for i in range(len(beliefs))]
+    remembered_wins = [wins[i][m if m>0 else 0:-latency if latency!=0 else None] for i in range(len(beliefs))]
+    return [ (sum(remembered_wins[i])+1)/(sum(remembered_tries[i])+2) for i in range(len(beliefs)) ]
+
+
     
 if __name__ == "__main__":
     print(defaultpayoff())
