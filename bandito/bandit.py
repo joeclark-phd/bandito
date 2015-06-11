@@ -26,7 +26,8 @@ class Bandit:
                  turbulence=0,
                  belief_fxn=simplebelief,
                  strategy=0.5,
-                 latency=0
+                 latency=0,
+                 memory=500
                  ):
         self._arms = arms
         self._turns = turns
@@ -67,6 +68,7 @@ class Bandit:
         
         self._belief_fxn = belief_fxn
         self._latency = latency
+        self._memory = memory
         # we must now record the actual tries and wins, not just running sums,
         # so that 'belief' algorithms can be programmed to consider when the
         # experiences occurred
@@ -83,7 +85,8 @@ class Bandit:
         # 1s (among zeroes) as long as the number of turns so far elapsed.
         # The belief-updating function is called with self._beliefs = 
         # self._belief_fxn( self._beliefs, self._tries, self._wins,
-        # self._latency) after self_tries and self_wins have been updated.
+        # self._latency, self._memory) after self_tries and self_wins
+        # have been updated.
         
         # data structures to hold score data over time
         self._score = []
@@ -116,7 +119,7 @@ class Bandit:
                 self._assetstock -= 1
                 
             # Update beliefs
-            self._beliefs = self._belief_fxn( self._beliefs, self._tries, self._wins, self._latency )
+            self._beliefs = self._belief_fxn( self._beliefs, self._tries, self._wins, self._latency, self._memory )
             
             # Score time series of asset stock, "Knowledge", "Opinion", and "Prob_Explore"
             self._score.append(self._assetstock)
