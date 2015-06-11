@@ -6,6 +6,13 @@ This work begins by replicating the multi-armed bandit simulation of Posen & Lev
 ###Contributors
 Joseph W Clark, joseph.w.clark@asu.edu
 
+###File Structure
+- All files in this directory (except README.md) define experiments.
+- Files in the `bandito` subfolder run the actual experiments:
+  - `/bandito/bandit.py` runs one replication of a bandit simulation.
+  - `/bandito/banditexperiment.py` runs an experiment with any specified set of treatments and number of replications.
+  - `/bandito/banditfunctions.py` contains algorithms for turbulence, strategy, beliefs, and payoffs. To implement a new algorithm, place it there.
+
 ###How to Use
 Copy the file `sample_experiment.py` and modify to set up your experiment.  Run it with something like the following:
 
