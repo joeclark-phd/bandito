@@ -7,7 +7,9 @@ This work begins by replicating the multi-armed bandit simulation of Posen & Lev
 Joseph W Clark, joseph.w.clark@asu.edu
 
 ###File Structure
-- All files in this directory (except README.md) define experiments.
+- All files in this directory (except `README.md`) define experiments.
+- The `output` subfolder will hold the data and log output from simulation experiments.
+- The `analysis` subfolder contains some sample scripts for visualizing the data with Python.
 - Files in the `bandito` subfolder run the actual experiments:
   - `/bandito/bandit.py` runs one replication of a bandit simulation.
   - `/bandito/banditexperiment.py` runs an experiment with any specified set of treatments and number of replications.
