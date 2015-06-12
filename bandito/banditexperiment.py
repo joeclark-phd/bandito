@@ -16,6 +16,7 @@ def BanditExperiment(debug=True,
                      belief_fxn=[belief_with_latency_and_memory],
                      strategy=[0.5],
                      latency=[0],
+                     initial_learning=0,
                      memory=[500],
                      experiment_name=""
                      ):
@@ -90,7 +91,7 @@ def BanditExperiment(debug=True,
 
                                         # Do one replication (of many) within an experimental condition:
 
-                                        b = Bandit( arms=arms, turns=turns, payoff_fxn=pf, turbulence_fxn=tf, strategy_fxn=sf, turbulence=tb, belief_fxn=bf, strategy=st, latency=lt)
+                                        b = Bandit( arms=arms, turns=turns, payoff_fxn=pf, turbulence_fxn=tf, strategy_fxn=sf, turbulence=tb, belief_fxn=bf, strategy=st, latency=lt, initial_learning=initial_learning, memory=mm)
                                         b.simulate()
                                         finalscores.append(b.score())
                                         finalknowledges.append(b.knowledge())

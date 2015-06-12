@@ -26,7 +26,8 @@ class Bandit:
                  turbulence=0,
                  belief_fxn=belief_with_latency_and_memory,
                  strategy=0.5,
-                 latency=0,
+                 latency=0, 
+                 initial_learning=0, # set to the highest latency value you'll use in ANY experiment to fix initialization bias
                  memory=500
                  ):
         self._arms = arms
@@ -72,9 +73,10 @@ class Bandit:
         # we must now record the actual tries and wins, not just running sums,
         # so that 'belief' algorithms can be programmed to consider when the
         # experiences occurred
-        self._tries = [[0] for i in range(arms)]
+        self._tries = [[0] for i in range(arms)] # note that _tries and _wins will have an extra zero for each arm; this doesn't cause any bugs so i'm leaving it alone
         self._wins = [[0] for i in range(arms)]
         self._beliefs = [0.5 for i in range(arms)]
+        self._initial_learning = initial_learning
         # By default, the gambler's belief about the payoff of each "arm"
         # is the number of wins divided by the number of tries.         
         # According to Hart Posen (personal communication), the initial
@@ -87,19 +89,43 @@ class Bandit:
         # self._belief_fxn( self._beliefs, self._tries, self._wins,
         # self._latency, self._memory) after self_tries and self_wins
         # have been updated.
-        
+          
         # data structures to hold score data over time
         self._score = []
         self._knowledge = []
         self._opinion = []
         self._probexplore = []
-        
+    
     def simulate(self):
         
         starttime = datetime.datetime.now()
+        
+        # INITIALIZATION BIAS FIX: a learner who has high latency (e.g. 16 turns) essentially
+        # gets 16 turns of free exploration (random arm choices) and could therefore in some cases
+        # benefit from an all-exploitation strategy; other learners don't have (as much of) this
+        # benefit, and are going to be biased toward greater exploration. To make it fair, we give
+        # everyone the same number of turns of free exploration, then give them their regular
+        # (500 by default) turns.  It is as if the simulation starts in the middle of the process,
+        # rather than ramping up to it. This change makes us backwards-incompatible with the 
+        # replication of Posen + Levinthal, if 'initial_learning' is greater than zero.
+        for il in range(self._initial_learning):
+            # implement turbulence
+            self._payoffs = self._turbulence_fxn( self._payoffs, self._payoff_fxn, self._turbulence)
+            # make a random choice
+            choice = random.choice(range(self._arms))
+            # The gambler's choice results in a win or a loss (a gain or loss of 1 "asset stock")
+            [self._tries[a].append(1) if a==choice else self._tries[a].append(0) for a in range(self._arms)]
+            if random.random() < self._payoffs[choice]:
+                [self._wins[a].append(1) if a==choice else self._wins[a].append(0) for a in range(self._arms)]
+            else:
+                [self._wins.append(0) for a in range(self._arms)]
+        # Set/update beliefs
+        self._beliefs = self._belief_fxn( self._beliefs, self._tries, self._wins, self._latency, self._memory )
+
+            
 
         for t in range(self._turns):
-        
+
             # implement turbulence
             self._payoffs = self._turbulence_fxn( self._payoffs, self._payoff_fxn, self._turbulence)
             
@@ -162,7 +188,7 @@ class Bandit:
 
 if __name__ == "__main__":
 
-    b = Bandit(belief_fxn=belief_with_latency)
+    b = Bandit(belief_fxn=belief_with_latency_and_memory,initial_learning=16)
     assert b.score() == None
     b.simulate()
     print( "final asset stock:", b.score() )

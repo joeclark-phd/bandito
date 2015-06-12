@@ -14,5 +14,5 @@ random.seed(12345)
 
 # Define the experiment:
 # This one only uses a few turbulence and latency levels but tries different memory values
-BanditExperiment(strategy=[0.02,0.25,0.5,0.75,1], turbulence=[0,0.04,0.08], latency=[0,4,16], memory=[20,40,80,160,320,500], replications=100, experiment_name="clark02")
+BanditExperiment(strategy=[0.02,0.25,0.5,0.75,1], turbulence=[0,0.04,0.08], latency=[0,4,16], memory=[20,40,80,160,320,500], replications=1000, experiment_name="clark02")
 
