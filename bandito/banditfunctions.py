@@ -43,6 +43,7 @@ def belief_with_latency_and_memory(beliefs, tries, wins, latency, memory):
     # it ignores tries within the last N turns (N=latency) to simulate
     # a less-than-immediate feedback loop.
     m = len(tries)-memory # the index of farthest-back remembrance
+    # TODO: adjust m with latency; if latency is 4, m should be m - 4 so that all learners have the same *amount* of data
     remembered_tries = [tries[i][m if m>0 else 0:-latency if latency!=0 else None] for i in range(len(beliefs))]
     remembered_wins = [wins[i][m if m>0 else 0:-latency if latency!=0 else None] for i in range(len(beliefs))]
     return [ (sum(remembered_wins[i])+1)/(sum(remembered_tries[i])+2) for i in range(len(beliefs)) ]
