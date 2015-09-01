@@ -1,5 +1,6 @@
 # This file continues experiment 01 with some additional latency values, just because I have some overnight machine time to use.
 
+# This is for a paper accepted to HICSS-49.
 
 # Import statements: do not change
 
