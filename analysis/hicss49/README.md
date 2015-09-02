@@ -1,0 +1,3 @@
+Code in this folder can be used to reproduce the data visualizations from Clark, J. (2016). "When are Real-Time Feedback Loops Most Valuable? New Insights from Bandit Simulations of Decision Making in Turbulent Environments", Proceedings of HICSS-49.
+
+Summary data is included but raw data from the experiments is too large for convenient handling.  Contact the author or re-run the experiments to replicate it.
