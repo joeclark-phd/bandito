@@ -1,6 +1,10 @@
-# This file continues experiment 01 with some additional latency values, just because I have some overnight machine time to use.
+# This file introduces experiments with the knowledge renewal capability, modeled as a time window of memory.
 
-# This is for a paper accepted to HICSS-49.
+
+# This experiment is reported in: Clark, J. (2016). When are Real-Time Feedback Loops Most Valuable? New Insights from Bandit Simulations of Decision Making in Turbulent Environments. Proceedings of HICSS-49.
+# Its results are featured in figs. 7-9.
+# For figs. 3-6, see clark_experiment_01.py
+
 
 # Import statements: do not change
 

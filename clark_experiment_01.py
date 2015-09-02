@@ -4,6 +4,11 @@
 # latency" at different levels of turbulence.
 
 
+# This experiment is reported in: Clark, J. (2016). When are Real-Time Feedback Loops Most Valuable? New Insights from Bandit Simulations of Decision Making in Turbulent Environments. Proceedings of HICSS-49.
+# Its results are featured in figs. 3-6.
+# For figs. 7-9, see clark_experiment_02.py
+
+
 # Import statements: do not change
 
 import random
