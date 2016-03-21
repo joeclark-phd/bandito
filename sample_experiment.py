@@ -15,6 +15,7 @@ from bandito.banditexperiment import BanditExperiment
 # Making note of your operating system and Python versions is also advisable.
 # Simply comment out the following two lines if you want new random results each time you run the program.
 
+# test experiments used random seed 12345
 random.seed(12345)
 
 # Define the experiment:
