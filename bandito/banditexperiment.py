@@ -5,26 +5,12 @@ from banditfunctions import *
 
 
 
-def BanditExperiment(debug=True,
-                     replications=100, # Posen & Levinthal used 25,000
-                     arms=10,
-                     turns=500,
-                     payoff_fxn=[betadist_payoff],
-                     turbulence_fxn=[randomshock],
-                     strategy_fxn=[softmax_strategy],
-                     turbulence=[0],
-                     belief_fxn=[belief_with_latency_and_memory],
-                     strategy=[0.5],
-                     latency=[0],
-                     initial_learning=0,
-                     memory=[500],
-                     experiment_name=""
-                     ):
+class BanditExperiment():
     """
-    This function should set up a set of Bandit simulations with given
-    parameters and run them as an experiment.  Its output will be a table
-    of data, each row containing the variable inputs and the outcomes
-    (averaged over replications within each experimental condition).
+    This class sets up a set of Bandit simulations with given
+    parameters and (when method "run" is fired) conducts an experiment.  
+    Its output will be a table of data, each row containing the variable inputs 
+    and the outcomes (averaged over replications within each experimental condition).
     
     Arguments except 'debug', 'experiment_name', 'replications', 'arms', and 
     'turns' are lists of values to experiment with.  For each combination
@@ -33,126 +19,173 @@ def BanditExperiment(debug=True,
     set turbulence=[0,0.1] and the experiment will be set up.
     """
 
-    programstart = datetime.datetime.now()
-    
-    _experiment_name = experiment_name if experiment_name else programstart.strftime('%Y%m%d-%H%M%S')
-    _logfile = open(("output/"+_experiment_name+"-log.txt"), 'w')
-    _datafile = open(("output/"+_experiment_name+"-data.csv"), 'w')
-    _datafile.write("EXPERIMENT,REPLICATION,PAYOFF_FXN,TURBULENCE_FXN,STRATEGY_FXN,BELIEF_FXN,TURBULENCE,STRATEGY,LATENCY,MEMORY,SCORE,KNOWLEDGE,OPINION,PROBEXPLORE\n") # CSV header row
-    _summaryfile = open(("output/"+_experiment_name+"-summary.csv"), 'w')
-    _summaryfile.write("EXPERIMENT,PAYOFF_FXN,TURBULENCE_FXN,STRATEGY_FXN,BELIEF_FXN,TURBULENCE,STRATEGY,LATENCY,MEMORY,MEAN_SCORE,MEAN_KNOWLEDGE,MEAN_OPINION,MEAN_PROBEXPLORE\n") # CSV header row
+    def __init__(self,
+				 debug=True,
+                 replications=100, # Posen & Levinthal used 25,000
+                 arms=[10],
+                 turns=[500],
+                 payoff_fxn=[betadist_payoff],
+                 turbulence_fxn=[randomshock],
+                 strategy_fxn=[softmax_strategy],
+                 turbulence=[0],
+                 belief_fxn=[belief_with_latency_and_memory],
+                 strategy=[0.5],
+                 latency=[0],
+                 initial_learning=[0],
+                 memory=[500],
+                 experiment_name=""
+                 ):
+        self.debug = debug
+        self.replications = replications
+        self.arms = arms
+        self.turns = turns
+        self.payoff_fxn = payoff_fxn
+        self.turbulence_fxn = turbulence_fxn
+        self.strategy_fxn = strategy_fxn
+        self.turbulence = turbulence
+        self.belief_fxn = belief_fxn
+        self.strategy = strategy
+        self.latency = latency
+        self.initial_learning = initial_learning
+        self.memory = memory
+        self.experiment_name = experiment_name
+	
+    def run(self):
+        programstart = datetime.datetime.now()
+        _experiment_name = self.experiment_name if self.experiment_name else programstart.strftime('%Y%m%d-%H%M%S')
+        _logfile = open(("output/"+_experiment_name+"-log.txt"), 'w', buffering=1)
+        _datafile = open(("output/"+_experiment_name+"-data.csv"), 'w', buffering=1)
+        _datafile.write("EXPERIMENT,REPLICATION,ARMS,TURNS,PAYOFF_FXN,TURBULENCE_FXN,STRATEGY_FXN,BELIEF_FXN,TURBULENCE,STRATEGY,LATENCY,INITIAL_LEARNING,MEMORY,SCORE,KNOWLEDGE,OPINION,PROBEXPLORE\n") # CSV header row
+        _summaryfile = open(("output/"+_experiment_name+"-summary.csv"), 'w', buffering=1)
+        _summaryfile.write("EXPERIMENT,ARMS,TURNS,PAYOFF_FXN,TURBULENCE_FXN,STRATEGY_FXN,BELIEF_FXN,TURBULENCE,STRATEGY,LATENCY,INITIAL_LEARNING,MEMORY,MEAN_SCORE,MEAN_KNOWLEDGE,MEAN_OPINION,MEAN_PROBEXPLORE\n") # CSV header row
 
-    def log(message):
-        _logfile.write(message)
-        if debug:
-            print(message)  #only print to screen if user wants it wordy for debugging purposes
+        def log(message):
+          _logfile.write(message)
+          if self.debug:
+              print(message)  #only print to screen if user wants it wordy for debugging purposes
         
-    _numexps = len(payoff_fxn)*len(turbulence_fxn)*len(strategy_fxn)*len(turbulence)*len(belief_fxn)*len(strategy)*len(latency)*len(memory)
-    log("Planning "+str(_numexps)+" experiments with "+str(replications)+
-             " replications x "+str(turns)+" turns each.\nI.e., a total of "+
-             str(_numexps*replications*turns)+" turns of processing.\n\n")
-    _currentexp = 0  # which experiment are we on currently?
+        _numexps_without_turns = len(self.arms)*len(self.payoff_fxn)*len(self.turbulence_fxn)*len(self.strategy_fxn)*len(self.turbulence)*len(self.belief_fxn)*len(self.strategy)*len(self.latency)*len(self.initial_learning)*len(self.memory)
+        _numturns = sum([t*_numexps_without_turns for t in self.turns])
+        _numexps = _numexps_without_turns*len(self.turns)
+
+        log("Planning "+str(_numexps)+" experiments with "+str(self.replications)+
+               " replications x "+" or ".join([str(t) for t in self.turns])+" turns each.\nI.e., a total of "+
+               str(self.replications*_numturns)+" turns of processing.\n\n")
+        _currentexp = 0  # which experiment are we on currently?
     
 
-    # Loop through all experimental conditions and run simulations:
+      # Loop through all experimental conditions and run simulations:
     
-    for pf in payoff_fxn:
-        for tf in turbulence_fxn:
-            for sf in strategy_fxn:
-                for tb in turbulence:
-                    for bf in belief_fxn:
-                        for st in strategy:
-                            for lt in latency:
-                                for mm in memory:
-                            
-                                    # Run several replications of the simulation within one experimental condition:
+        for ar in self.arms:
+            for tu in self.turns:
+                for il in self.initial_learning:
+                    for pf in self.payoff_fxn:
+                        for tf in self.turbulence_fxn:
+                            for sf in self.strategy_fxn:
+                                for tb in self.turbulence:
+                                    for bf in self.belief_fxn:
+                                        for st in self.strategy:
+                                            for lt in self.latency:
+                                                for mm in self.memory:
 
-                                    # hold the data from each replication (to be averaged later)
-                                    finalscores = []
-                                    finalknowledges = []
-                                    finalopinions = []
-                                    finalprobexplores = []
+                                                    # Run several replications of the simulation within one experimental condition:
 
-                                    _currentexp += 1
+                                                    # hold the data from each replication (to be averaged later)
+                                                    finalscores = []
+                                                    finalknowledges = []
+                                                    finalopinions = []
+                                                    finalprobexplores = []
 
-                                    log("Starting experiment " + str(_currentexp) +
-                                        " of " + str(_numexps) +
-                                        " with:\n payoff_fxn="+str(pf)+
-                                        "\n turbulence_fxn="+str(tf)+
-                                        "\n strategy_fxn="+str(sf)+
-                                        "\n belief_fxn="+str(bf)+
-                                        "\n turbulence="+str(tb)+
-                                        "\n strategy="+str(st)+
-                                        "\n latency="+str(lt)+
-                                        "\n memory="+str(mm)+"\n")
-                                    expstart = datetime.datetime.now()
+                                                    _currentexp += 1
 
-                                    for i in range(replications):
+                                                    log("Starting experiment " + str(_currentexp) +
+                                                        " of " + str(_numexps) +
+                                                        " with:"+
+                                                        "\n arms="+str(ar)+
+                                                        "\n turns="+str(tu)+
+                                                        "\n payoff_fxn="+str(pf)+
+                                                        "\n turbulence_fxn="+str(tf)+
+                                                        "\n strategy_fxn="+str(sf)+
+                                                        "\n belief_fxn="+str(bf)+
+                                                        "\n turbulence="+str(tb)+
+                                                        "\n strategy="+str(st)+
+                                                        "\n latency="+str(lt)+
+                                                        "\n initial_learning="+str(il)+
+                                                        "\n memory="+str(mm)+"\n")
+                                                    expstart = datetime.datetime.now()
 
-                                        # Do one replication (of many) within an experimental condition:
+                                                    for i in range(self.replications):
 
-                                        b = Bandit( arms=arms, turns=turns, payoff_fxn=pf, turbulence_fxn=tf, strategy_fxn=sf, turbulence=tb, belief_fxn=bf, strategy=st, latency=lt, initial_learning=initial_learning, memory=mm)
-                                        b.simulate()
-                                        finalscores.append(b.score())
-                                        finalknowledges.append(b.knowledge())
-                                        finalopinions.append(b.opinion())
-                                        finalprobexplores.append(b.probexplore())
-                                        # log the data
-                                        _datafile.write('{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n'.format(
-                                                _currentexp, # experiment number
-                                                (i+1), # replication number
-                                                str(pf),
-                                                str(tf),
-                                                str(sf),
-                                                str(bf),
-                                                str(tb),
-                                                str(st),
-                                                str(lt),
-                                                str(mm),
-                                                b.score(),
-                                                b.knowledge(),
-                                                b.opinion(),
-                                                b.probexplore()
-                                                ))
-                                        #log("simulation "+str(i+1)+" of "+str(replications)+" took "+str(b._simtime))
+                                                        # Do one replication (of many) within an experimental condition:
 
-                                    # Take average results from all replications (within one experimental condition)
-                                    # and output them to a 'summary' data file.
+                                                        b = Bandit( arms=ar, turns=tu, payoff_fxn=pf, turbulence_fxn=tf, strategy_fxn=sf, turbulence=tb, belief_fxn=bf, strategy=st, latency=lt, initial_learning=il, memory=mm)
+                                                        b.simulate()
+                                                        finalscores.append(b.score())
+                                                        finalknowledges.append(b.knowledge())
+                                                        finalopinions.append(b.opinion())
+                                                        finalprobexplores.append(b.probexplore())
+                                                        # log the data
+                                                        _datafile.write('{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n'.format(
+                                                                _currentexp, # experiment number
+                                                                (i+1), # replication number
+                                                                str(ar),
+                                                                str(tu),
+                                                                str(pf),
+                                                                str(tf),
+                                                                str(sf),
+                                                                str(bf),
+                                                                str(tb),
+                                                                str(st),
+                                                                str(lt),
+                                                                str(il),
+                                                                str(mm),
+                                                                b.score(),
+                                                                b.knowledge(),
+                                                                b.opinion(),
+                                                                b.probexplore()
+                                                                ))
+                                                        #log("simulation "+str(i+1)+" of "+str(replications)+" took "+str(b._simtime))
 
-                                    _summaryfile.write('{},{},{},{},{},{},{},{},{},{},{},{},{}\n'.format(
-                                        _currentexp,
-                                        str(pf),
-                                        str(tf),
-                                        str(sf),
-                                        str(bf),
-                                        str(tb),
-                                        str(st),
-                                        str(lt),
-                                        str(mm),
-                                        sum(finalscores)/replications,
-                                        sum(finalknowledges)/replications,
-                                        sum(finalopinions)/replications,
-                                        sum(finalprobexplores)/replications
-                                        ))
+                                                    # Take average results from all replications (within one experimental condition)
+                                                    # and output them to a 'summary' data file.
 
-                                    log("FINISHED in "+str(datetime.datetime.now()-expstart)+"\n\n")
+                                                    _summaryfile.write('{},{},{},{},{},{},{},{},{},{},{},{},{}\n'.format(
+                                                        _currentexp,
+                                                        str(ar),
+                                                        str(tu),
+                                                        str(pf),
+                                                        str(tf),
+                                                        str(sf),
+                                                        str(bf),
+                                                        str(tb),
+                                                        str(st),
+                                                        str(lt),
+                                                        str(il),
+                                                        str(mm),
+                                                        sum(finalscores)/self.replications,
+                                                        sum(finalknowledges)/self.replications,
+                                                        sum(finalopinions)/self.replications,
+                                                        sum(finalprobexplores)/self.replications
+                                                        ))
 
-                                    # Loop goes to the next experimental condition.
+                                                    log("FINISHED in "+str(datetime.datetime.now()-expstart)+"\n\n")
+
+                                                    # Loop goes to the next experimental condition.
 
 
 
 
-    log("All experiments completed in " + str(datetime.datetime.now() - programstart))
-    _logfile.close()
-    _datafile.close()
-    _summaryfile.close()
-        
+        log("All experiments completed in " + str(datetime.datetime.now() - programstart))
+        _logfile.close()
+        _datafile.close()
+        _summaryfile.close()
+          
         
         
 
 
 if __name__ == "__main__":
-    BanditExperiment(strategy=[0.25,0.5])
+    BanditExperiment(strategy=[0.25,0.5]).run()
     
 
 

@@ -3,6 +3,9 @@
 [#]*[#]
 .\#*
 
+#pycharm
+.idea
+
 # experiment output
 output/*.txt
 output/*.csv

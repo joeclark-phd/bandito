@@ -19,5 +19,5 @@ random.seed(12345)
 
 # Define the experiment:
 # This one introduces memory; only needs two latency levels to calculate "cost of latency". 480 experiments.
-BanditExperiment(strategy=[0.02,0.25,0.5,0.75,1], turbulence=[0,0.005,0.01,0.02,0.04,0.08,0.16,0.32], latency=[0,16], memory=[20,40,80,160,320,500], replications=1000, experiment_name="clark02b", initial_learning=16)
+BanditExperiment(strategy=[0.02,0.25,0.5,0.75,1], turbulence=[0,0.005,0.01,0.02,0.04,0.08,0.16,0.32], latency=[0,16], memory=[20,40,80,160,320,500], replications=1000, experiment_name="clark02b", initial_learning=16).run()
 

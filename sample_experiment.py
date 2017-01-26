@@ -33,7 +33,7 @@ random.seed(12345)
 # Default values are used for arguments not assigned values.  
 # See bandito/banditexperiment.py to examine the default arguments.
 
-BanditExperiment(strategy=[0.02,0.25,0.5,0.75,1], replications=100, experiment_name="sample")
+BanditExperiment(strategy=[0.02,0.25,0.5,0.75,1], replications=100, experiment_name="sample").run()
 
 # Run this file by typing something like: python sample_experiment.py
 # Output files will be found in the 'output' directory.
