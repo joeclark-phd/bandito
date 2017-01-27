@@ -20,10 +20,24 @@ from bandito.banditexperiment import BanditExperiment
 # test experiments used random seed 12345
 random.seed(12345)
 
-# Define the experiment:
+# Each of these should produce a dataset like the replication of figure 1, so we can use the same code (I hope) to produce the graph of it. 
 
-BanditExperiment(arms=[5,20],turns=[2000], memory=[2000], strategy=[0.02,0.25,0.5,0.75,1], replications=100, experiment_name="2000turns").run()
-BanditExperiment(arms=[5,20],turns=[100], memory=[100], strategy=[0.02,0.25,0.5,0.75,1], replications=100, experiment_name="100turns").run()
+BanditExperiment(arms=[5],turns=[100], memory=[100], strategy=[0.02,0.25,0.5,0.75,1], replications=1000, experiment_name="fig1_5arms100turns").run()
+BanditExperiment(arms=[5],turns=[2000], memory=[2000], strategy=[0.02,0.25,0.5,0.75,1], replications=1000, experiment_name="fig1_5arms2000turns").run()
+BanditExperiment(arms=[20],turns=[100], memory=[100], strategy=[0.02,0.25,0.5,0.75,1], replications=1000, experiment_name="fig1_20arms100turns").run()
+BanditExperiment(arms=[20],turns=[2000], memory=[2000], strategy=[0.02,0.25,0.5,0.75,1], replications=1000, experiment_name="fig1_20arms2000turns").run()
+
+from banditfunctions import *
+
+BanditExperiment(strategy=[0.02,0.25,0.5,0.75,1], replications=1000, payoff_fxn=[uniform_payoff], experiment_name="fig1_uniformdist").run()
+BanditExperiment(strategy=[0.02,0.25,0.5,0.75,1], replications=1000, strategy_fxn=[epsilongreedy_strategy], experiment_name="fig1_epsilongreedy").run() # crashed with division by zero problem
+
+# These have different strategy levels and might require slightly different code.  Not sure!
+
+BanditExperiment(strategy=[0.02,0.33,0.67,1], replications=1000, experiment_name="fig1_4taulevels").run()
+BanditExperiment(strategy=[0.02,0.125,0.25,0.375,0.5,0.625,0.75,0.875,1], replications=1000, experiment_name="fig1_9taulevels").run()
+
+
 
 # Run this file by typing something like: python sample_experiment.py
 # Output files will be found in the 'output' directory.

@@ -4,6 +4,9 @@ import random, math
 
 def betadist_payoff():
     return random.betavariate(2,2)
+
+def uniform_payoff():
+    return random.random()
     
 def randomshock(payoffs, payoff_fxn, turbulence):
     # Turbulence as random "shocks" to the environment that re-set
@@ -22,6 +25,19 @@ def softmax_strategy(beliefs, strategy):
     # From replication of Posen & Levinthal (2012).
     return [ math.exp(b/(strategy/10))/sum([ math.exp(a/(strategy/10)) for a in beliefs ]) for b in beliefs ]
     
+def epsilongreedy_strategy(beliefs, strategy):
+    if random.random() < strategy:
+      # explore
+      options = [0 if b==max(beliefs) else 1 for b in beliefs]
+    else:
+      # exploit
+      options = [1 if b==max(beliefs) else 0 for b in beliefs]
+    # transform 1s to fractions adding up to 1
+    if sum(options):
+      return list(map( lambda x:x/sum(options), options ))
+    else: # avoid divide by zero
+      return [ 1/len(options) for o in options ]
+
 def simplebelief(beliefs, tries, wins, latency, memory):
     # Simply calculate tries/wins for each arm to estimate the payoff.
     # This function never forgets and does not weight the data in any way.
