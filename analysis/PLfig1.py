@@ -39,14 +39,17 @@ ax.plot(df.STRATEGY, df.MEAN_SCORE, color='black',linewidth=2,label='Performance
 #xp = np.linspace(0,1)
 #ax.plot(xp,poly(xp),'r')
 #ax.plot(optimumstrategy,maxperformance,'ro')
-ax.set_title('P+L (2012) Figure 1. Choice, Performance, and\nKnowledge Across Strategies in Stable Environment')
+ax.set_title('Choice, Performance, an Knowledge Across Strategies\nin Stable Environment (Replication)')
 ax.set_xlabel('Strategy (tau)')
 ax.set_ylabel('Performance')
+plt.ylim([210,290])
 # now the plots that use the right y-axis
 ax2=ax.twinx()
 ax2.plot(df.STRATEGY, df.MEAN_PROBEXPLORE, linewidth=2, linestyle='--', color='black',label='Choice (prob. exploring)')
 ax2.plot(df.STRATEGY, df.MEAN_KNOWLEDGE, linestyle=':', color='black',label='Knowledge')
 ax2.set_ylabel('Fraction')
+plt.xlim([-.05,1.05])
+
 # put this last because it was disappearing when done earlier
 ax.set_xticks([0,0.25,0.5,0.75,1])
 # now the legend

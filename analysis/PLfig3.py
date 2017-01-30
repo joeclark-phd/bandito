@@ -54,7 +54,7 @@ ax2.plot(secondds, color='black', linestyle="--", linewidth=2, label="2nd deriv.
 ax2.set_ylim([-350,0])
 ax.set_xlim([-.5,7.5])
 # labels
-ax.set_title('P+L (2012) Figure 3. Optimal Exploration\nStrategy (tau) Across Turbulence Levels')
+ax.set_title('Optimal Exploration Strategy (tau)\nAcross Turbulence Levels (Replication)')
 ax.set_xlabel('Turbulence')
 ax.set_ylabel('Strategy (tau)')
 ax2.set_ylabel('2nd derivative')

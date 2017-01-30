@@ -149,7 +149,7 @@ class BanditExperiment():
                                                     # Take average results from all replications (within one experimental condition)
                                                     # and output them to a 'summary' data file.
 
-                                                    _summaryfile.write('{},{},{},{},{},{},{},{},{},{},{},{},{}\n'.format(
+                                                    _summaryfile.write('{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n'.format(
                                                         _currentexp,
                                                         str(ar),
                                                         str(tu),
