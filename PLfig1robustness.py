@@ -30,7 +30,7 @@ BanditExperiment(arms=[20],turns=[2000], memory=[2000], strategy=[0.02,0.25,0.5,
 from banditfunctions import *
 
 BanditExperiment(strategy=[0.02,0.25,0.5,0.75,1], replications=1000, payoff_fxn=[uniform_payoff], experiment_name="fig1_uniformdist").run()
-BanditExperiment(strategy=[0,0.05,0.1,0.15,0.2,0.25], replications=1000, strategy_fxn=[epsilongreedy_strategy], experiment_name="fig1_epsilongreedy").run() # crashed with division by zero problem
+BanditExperiment(strategy=[0,0.05,0.1,0.15,0.2,0.25], replications=1000, strategy_fxn=[epsilongreedy_strategy], experiment_name="fig1_epsilongreedy").run()
 
 # These have different strategy levels and might require slightly different code.  Not sure!
 
