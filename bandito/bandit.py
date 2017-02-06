@@ -126,6 +126,7 @@ class Bandit:
 
         for t in range(self._turns):
 
+            print('turn ',t)
             # implement turbulence
             self._payoffs = self._turbulence_fxn( self._payoffs, self._payoff_fxn, self._turbulence)
             
@@ -158,7 +159,7 @@ class Bandit:
         endtime = datetime.datetime.now()
         self._simtime = endtime-starttime # how long the simulation took
         
-
+        
     def score(self):
         if self._complete:
             return self._score[-1]
@@ -166,6 +167,12 @@ class Bandit:
             return None
             # todo: decide: if they request the score without first running the simulation, should we run self.simulate() for them? or raise an exception, or what?
             
+    def allscores(self):
+        if self._complete:
+            return self._score
+        else:
+            return None
+
     def knowledge(self):
         if self._complete:
             return self._knowledge[-1]

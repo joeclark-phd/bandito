@@ -33,7 +33,8 @@ class BanditExperiment():
                  latency=[0],
                  initial_learning=[0],
                  memory=[500],
-                 experiment_name=""
+                 experiment_name="",
+                 timeseries=False,
                  ):
         self.debug = debug
         self.replications = replications
@@ -49,6 +50,7 @@ class BanditExperiment():
         self.initial_learning = initial_learning
         self.memory = memory
         self.experiment_name = experiment_name
+        self.timeseries = timeseries
 	
     def run(self):
         programstart = datetime.datetime.now()
@@ -58,6 +60,8 @@ class BanditExperiment():
         _datafile.write("EXPERIMENT,REPLICATION,ARMS,TURNS,PAYOFF_FXN,TURBULENCE_FXN,STRATEGY_FXN,BELIEF_FXN,TURBULENCE,STRATEGY,LATENCY,INITIAL_LEARNING,MEMORY,SCORE,KNOWLEDGE,OPINION,PROBEXPLORE\n") # CSV header row
         _summaryfile = open(("output/"+_experiment_name+"-summary.csv"), 'w', buffering=1)
         _summaryfile.write("EXPERIMENT,ARMS,TURNS,PAYOFF_FXN,TURBULENCE_FXN,STRATEGY_FXN,BELIEF_FXN,TURBULENCE,STRATEGY,LATENCY,INITIAL_LEARNING,MEMORY,MEAN_SCORE,MEAN_KNOWLEDGE,MEAN_OPINION,MEAN_PROBEXPLORE\n") # CSV header row
+        if self.timeseries: _timeseriesfile = open(("output/"+_experiment_name+"-timeseries.csv"), 'w', buffering=1)
+
 
         def log(message):
           _logfile.write(message)
@@ -145,6 +149,8 @@ class BanditExperiment():
                                                                 b.probexplore()
                                                                 ))
                                                         #log("simulation "+str(i+1)+" of "+str(replications)+" took "+str(b._simtime))
+                                                        if self.timeseries:
+                                                            _timeseriesfile.write(','.join([str(s) for s in b.allscores()])+'\n')
 
                                                     # Take average results from all replications (within one experimental condition)
                                                     # and output them to a 'summary' data file.
