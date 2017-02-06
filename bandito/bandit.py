@@ -126,7 +126,7 @@ class Bandit:
 
         for t in range(self._turns):
 
-            print('turn ',t)
+            # print('turn ',t)
             # implement turbulence
             self._payoffs = self._turbulence_fxn( self._payoffs, self._payoff_fxn, self._turbulence)
             
