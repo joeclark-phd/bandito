@@ -13,7 +13,7 @@ import matplotlib.lines as mlines
 
 # read the summary data
 #df = pd.read_csv("clark02a-summary.csv") #02a is an earlier version with only 3 levels of turbulence and latency, before the initialization bias bug was fixed
-df = pd.read_csv("clark02b-summary.csv") #02b has more levels of turbulence 
+df = pd.read_csv("clark02-summary.csv") #02b has more levels of turbulence 
 
 # levels of latency and turbulence
 latencys = df.LATENCY.unique()
@@ -65,10 +65,10 @@ ax = fig.add_subplot(1,1,1)
 for t in range(len(turbs)):
     lw = 3 if t == 0 else 1
     ax.plot(range(len(mems)),maxperformance[t][0], color='black', linewidth=lw, label='Best Performance')
-    plt.text(len(mems)-0.5,maxperformance[t][0][-1],"T="+str(turbs[t]))
+    plt.text(len(mems)-.8,maxperformance[t][0][-1],"T="+str(turbs[t]))
 ax.set_xticks(range(len(mems)))
 ax.set_xticklabels(mems)
-ax.set_xlim([-0.5,len(mems)+0.5])
+ax.set_xlim([-0.5,len(mems)+1])
 ax.set_ylabel("Performance")
 ax.set_xlabel("Length of Memory (turns)")
 ax.set_title("Attainable Performance with Various\nLevels of Memory and Turbulence")
@@ -87,14 +87,14 @@ ax = fig.add_subplot(1,1,1)
 for t in range(len(turbs)):
     lw = 3 if t == 0 else 1
     ax.plot(range(len(mems)),relativeperformance[t][0], color='black', linewidth=lw, label='Best Performance')
-    plt.text(len(mems)-0.5,relativeperformance[t][0][-1],"T="+str(turbs[t]))
+    plt.text(len(mems)-.8,relativeperformance[t][0][-1],"T="+str(turbs[t]))
 ax.set_xticks(range(len(mems)))
 ax.set_xticklabels(mems)
-ax.set_xlim([-0.5,len(mems)+0.5])
-ax.set_ylim([-6,10])
-ax.set_ylabel("Performance")
+ax.set_xlim([-0.5,len(mems)+1])
+ax.set_ylim([0,200])
+ax.set_ylabel("Performance (relative to M=50)")
 ax.set_xlabel("Length of Memory (turns)")
-ax.set_title("Attainable Performance with Various Levels of\nTurbulence and Memory (values relative to M=20)")
+ax.set_title("Attainable Performance with Various Levels of\nTurbulence and Memory (values relative to M=50)")
 # now the legend
 performance_line = mlines.Line2D([],[],color='black',linewidth=3,label='Performance at T=0')
 plt.legend(handles=[performance_line],loc=2)
@@ -141,17 +141,19 @@ for m in range(len(mems)):
 fig = plt.figure()
 ax = fig.add_subplot(1,1,1)
 for m in range(len(mems)):
-    lw = 3 if m == 0 else 1
-    ax.plot(range(len(turbs)),cost_of_latency[m], color='black', linewidth=lw, label='Cost of Latency')
-    plt.text(len(turbs)-0.5,cost_of_latency[m][-1],"M="+str(mems[m]))
-ax.set_xlim([-0.5,len(turbs)+0.5])
+    lw = 3 if m == len(mems)-1 else 1
+    ax.plot(range(len(turbs)),cost_of_latency[m], color=col, linewidth=lw, label='Cost of Latency')
+    y = cost_of_latency[m][0]+2 if m==0 else cost_of_latency[m][0]-1.5 # jigger label for M=50 upward so it is readable
+    plt.text(-1.1,y,"M="+str(mems[m]))
+ax.set_xlim([-1.5,len(turbs)-0.5])
 ax.set_xticks(range(len(turbs)))
 ax.set_xticklabels(turbs)
+ax.set_ylim([-20,90])
 ax.set_ylabel("Cost of Latency\n(performance at L=0 - performance at L=16)")
 ax.set_xlabel("Turbulence")
 ax.set_title("Cost of Latency (or Value of Real-Time Feedback)\nat Different Levels of Turbulence and Memory")
 # now the legend
-cost_line = mlines.Line2D([],[],color='black',linewidth=3,label='Cost of Latency, M=0')
+cost_line = mlines.Line2D([],[],color='black',linewidth=3,label='Cost of Latency, M=500')
 plt.legend(handles=[cost_line],loc=4)
 plt.show()
 
