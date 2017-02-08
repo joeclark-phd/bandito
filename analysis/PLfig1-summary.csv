@@ -1,6 +1,0 @@
-EXPERIMENT,PAYOFF_FXN,TURBULENCE_FXN,STRATEGY_FXN,BELIEF_FXN,TURBULENCE,STRATEGY,MEAN_SCORE,MEAN_KNOWLEDGE,MEAN_OPINION,MEAN_PROBEXPLORE
-1,<function betadist_payoff at 0x005C75D0>,<function randomshock at 0x005C79C0>,<function softmax_strategy at 0x005C7540>,<function simplebelief at 0x005C78A0>,0,0.02,240.54984,0.5887658931896337,0.11740474664947988,0.00015273848080601314
-2,<function betadist_payoff at 0x005C75D0>,<function randomshock at 0x005C79C0>,<function softmax_strategy at 0x005C7540>,<function simplebelief at 0x005C78A0>,0,0.25,264.28376,0.6108914960251363,0.14912707650850626,0.01681578547889364
-3,<function betadist_payoff at 0x005C75D0>,<function randomshock at 0x005C79C0>,<function softmax_strategy at 0x005C7540>,<function simplebelief at 0x005C78A0>,0,0.5,281.21776,0.6746283433215109,0.23947365316964977,0.13051335879231235
-4,<function betadist_payoff at 0x005C75D0>,<function randomshock at 0x005C79C0>,<function softmax_strategy at 0x005C7540>,<function simplebelief at 0x005C78A0>,0,0.75,271.51536,0.7519357325779585,0.3395005661512426,0.29276711687830353
-5,<function betadist_payoff at 0x005C75D0>,<function randomshock at 0x005C79C0>,<function softmax_strategy at 0x005C7540>,<function simplebelief at 0x005C78A0>,0,1,247.77056,0.8135325098710081,0.40243285436259396,0.42023493587741856
