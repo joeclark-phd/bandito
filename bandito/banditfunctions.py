@@ -61,6 +61,7 @@ def belief_with_latency_and_memory(beliefs, tries, wins, latency, memory):
     m = len(tries[0])-memory # the index of farthest-back remembrance
     m = m - latency # so all learners have the same amount of memory, those with latency remember more further back results
     remembered_tries = [tries[i][m if m>0 else 0:-latency if latency!=0 else None] for i in range(len(beliefs))]
+    #print('number of tries = ',len(remembered_tries[0]))
     remembered_wins = [wins[i][m if m>0 else 0:-latency if latency!=0 else None] for i in range(len(beliefs))]
     return [ (sum(remembered_wins[i])+1)/(sum(remembered_tries[i])+2) for i in range(len(beliefs)) ]
 

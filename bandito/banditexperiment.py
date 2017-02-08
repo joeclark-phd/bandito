@@ -31,7 +31,6 @@ class BanditExperiment():
                  belief_fxn=[belief_with_latency_and_memory],
                  strategy=[0.5],
                  latency=[0],
-                 initial_learning=[0],
                  memory=[500],
                  experiment_name="",
                  timeseries=False,
@@ -47,7 +46,6 @@ class BanditExperiment():
         self.belief_fxn = belief_fxn
         self.strategy = strategy
         self.latency = latency
-        self.initial_learning = initial_learning
         self.memory = memory
         self.experiment_name = experiment_name
         self.timeseries = timeseries
@@ -68,7 +66,7 @@ class BanditExperiment():
           if self.debug:
               print(message)  #only print to screen if user wants it wordy for debugging purposes
         
-        _numexps_without_turns = len(self.arms)*len(self.payoff_fxn)*len(self.turbulence_fxn)*len(self.strategy_fxn)*len(self.turbulence)*len(self.belief_fxn)*len(self.strategy)*len(self.latency)*len(self.initial_learning)*len(self.memory)
+        _numexps_without_turns = len(self.arms)*len(self.payoff_fxn)*len(self.turbulence_fxn)*len(self.strategy_fxn)*len(self.turbulence)*len(self.belief_fxn)*len(self.strategy)*len(self.latency)*len(self.memory)
         _numturns = sum([t*_numexps_without_turns for t in self.turns])
         _numexps = _numexps_without_turns*len(self.turns)
 
@@ -82,7 +80,7 @@ class BanditExperiment():
     
         for ar in self.arms:
             for tu in self.turns:
-                for il in self.initial_learning:
+                #for il in self.initial_learning:
                     for pf in self.payoff_fxn:
                         for tf in self.turbulence_fxn:
                             for sf in self.strategy_fxn:
@@ -101,6 +99,8 @@ class BanditExperiment():
                                                     finalprobexplores = []
 
                                                     _currentexp += 1
+
+                                                    il = lt #this should guarantee that latency conditions don't wait until turn lt+1 to start learning; they have some initial learning, it's just out of date
 
                                                     log("Starting experiment " + str(_currentexp) +
                                                         " of " + str(_numexps) +
