@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import matplotlib.lines as mlines
 
 # read the summary data
-df = pd.read_csv("PLfig3-summary.csv")
+df = pd.read_csv("fig3_epsilongreedy-summary.csv")
 
 # attempts at plots
 #plt.plot(df.MEAN_SCORE)
@@ -47,21 +47,21 @@ for t in turbs:
 fig = plt.figure()
 ax = fig.add_subplot(1,1,1)
 ax.plot(opts, color='black', linewidth=2, label='Optimal')
-ax.set_ylim([0.3,0.7])
+#ax.set_ylim([0.3,0.8])
 ax.set_xlim([-.5,7.5])
 ax2=ax.twinx()
 ax2.plot(secondds, color='black', linestyle="--", linewidth=2, label="2nd deriv. at optimal")
-ax2.set_ylim([-350,0])
+#ax2.set_ylim([-600,0])
 ax.set_xlim([-.5,7.5])
 # labels
-ax.set_title('Optimal Exploration Strategy (tau)\nAcross Turbulence Levels (Replication)')
+ax.set_title('Figure 2 variation\nwith epsilon-greedy strategy')
 ax.set_xlabel('Turbulence')
-ax.set_ylabel('Strategy (tau)')
+ax.set_ylabel('Strategy (epsilon)')
 ax2.set_ylabel('2nd derivative')
 ax.set_xticks(np.arange(len(turbs)))
 ax.set_xticklabels(turbs)
 # now the legend
-opts_line = mlines.Line2D([],[],color='black',linewidth=2,label='Optimal')
+opts_line = mlines.Line2D([],[],color='black',linewidth=2,label='Optimal strategy (epsilon)')
 secondd_line = mlines.Line2D([],[],color='black',linewidth=2,linestyle='--',label='2nd deriv. at optimal')
 plt.legend(handles=[opts_line,secondd_line],loc='best')
 plt.show()

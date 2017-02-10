@@ -69,9 +69,10 @@ for t in range(len(turbs)):
 ax.set_xticks(range(len(mems)))
 ax.set_xticklabels(mems)
 ax.set_xlim([-0.5,len(mems)+1])
+ax.set_ylim([0,350])
 ax.set_ylabel("Performance")
 ax.set_xlabel("Length of Memory (turns)")
-ax.set_title("Attainable Performance with Various\nLevels of Memory and Turbulence")
+ax.set_title("Attainable Performance as function of Memory\nat several levels of Turbulence")
 # now the legend
 performance_line = mlines.Line2D([],[],color='black',linewidth=3,label='Performance at T=0')
 plt.legend(handles=[performance_line],loc=0)
@@ -91,10 +92,10 @@ for t in range(len(turbs)):
 ax.set_xticks(range(len(mems)))
 ax.set_xticklabels(mems)
 ax.set_xlim([-0.5,len(mems)+1])
-ax.set_ylim([0,200])
+ax.set_ylim([-10,220])
 ax.set_ylabel("Performance (relative to M=50)")
 ax.set_xlabel("Length of Memory (turns)")
-ax.set_title("Attainable Performance with Various Levels of\nTurbulence and Memory (values relative to M=50)")
+ax.set_title("Attainable Performance as function of Memory\nat several levels of Turbulence (values relative to M=50)")
 # now the legend
 performance_line = mlines.Line2D([],[],color='black',linewidth=3,label='Performance at T=0')
 plt.legend(handles=[performance_line],loc=2)
@@ -140,18 +141,18 @@ for m in range(len(mems)):
 #the figure
 fig = plt.figure()
 ax = fig.add_subplot(1,1,1)
-for m in range(len(mems)):
+for m in [0,3,4,5,9]:
     lw = 3 if m == len(mems)-1 else 1
-    ax.plot(range(len(turbs)),cost_of_latency[m], color=col, linewidth=lw, label='Cost of Latency')
-    y = cost_of_latency[m][0]+2 if m==0 else cost_of_latency[m][0]-1.5 # jigger label for M=50 upward so it is readable
-    plt.text(-1.1,y,"M="+str(mems[m]))
+    ax.plot(range(len(turbs)),cost_of_latency[m], color='black', linewidth=lw, label='Cost of Latency')
+    #y = cost_of_latency[m][0]+2 if m==0 else cost_of_latency[m][0]-1.5 # jigger label for M=50 upward so it is readable
+    plt.text(-1.1,cost_of_latency[m][0]-1.5,"M="+str(mems[m]))
 ax.set_xlim([-1.5,len(turbs)-0.5])
 ax.set_xticks(range(len(turbs)))
 ax.set_xticklabels(turbs)
 ax.set_ylim([-20,90])
 ax.set_ylabel("Cost of Latency\n(performance at L=0 - performance at L=16)")
 ax.set_xlabel("Turbulence")
-ax.set_title("Cost of Latency (or Value of Real-Time Feedback)\nat Different Levels of Turbulence and Memory")
+ax.set_title("Cost of Latency (or Value of Real-Time Feedback)\nas function of Turbulence at selected Memory levels")
 # now the legend
 cost_line = mlines.Line2D([],[],color='black',linewidth=3,label='Cost of Latency, M=500')
 plt.legend(handles=[cost_line],loc=4)
