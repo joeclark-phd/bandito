@@ -1,12 +1,13 @@
 [![Stories in Ready](https://badge.waffle.io/joeclark-phd/bandito.svg?label=ready&title=Ready)](http://waffle.io/joeclark-phd/bandito) 
 
-###Bandit Model Research Simulations
+### Bandit Model Research Simulations
 This work begins by replicating the multi-armed bandit simulation of Posen & Levinthal (2012), "Chasing a Moving Target: Exploitation and Exploration in Dynamic Environments", Management Science 58(3), pp.587-601.  It extends this into a general-purpose bandit simulation with additional variables that can be manipulated for further research.
 
-###Contributors
+### Contributors
 Joseph W Clark, joe.clark@maine.edu
 
-###File Structure
+### File Structure
+
 - All files in this directory (except `README.md`) define experiments.
 - The `output` subfolder will hold the data and log output from simulation experiments.
 - The `analysis` subfolder contains some sample scripts for visualizing the data with Python.
@@ -15,7 +16,7 @@ Joseph W Clark, joe.clark@maine.edu
   - `/bandito/banditexperiment.py` runs an experiment with any specified set of treatments and number of replications.
   - `/bandito/banditfunctions.py` contains algorithms for turbulence, strategy, beliefs, and payoffs. To implement a new algorithm, place it there.
 
-###How to Use
+### How to Use
 Copy the file `sample_experiment.py` and modify to set up your experiment.  Run it with something like the following:
 
     python sample_experiment.py
